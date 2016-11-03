@@ -14,25 +14,33 @@ namespace InfoScreen1
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-
             // Set our view from the "main" layout resource
             SetContentView (Resource.Layout.Main);
-
-            JavaList<string> toDo = new JavaList<string>();
+            JavaList<Item> toDo = new JavaList<Item>();
             
-
+            
             Button AddItem = FindViewById<Button>(Resource.Id.additem_btn);
             ListView list = FindViewById<ListView>(Resource.Id.listView1);
             EditText input = FindViewById<EditText>(Resource.Id.editText1);
 
+            list.ChoiceMode = ChoiceMode.Multiple;
+
+            ArrayAdapter adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItemMultipleChoice, toDo);
+            list.Adapter = adapter;
 
             list.ItemLongClick += (object sender, AdapterView.ItemLongClickEventArgs e) =>
             {
                 int pos = e.Position;
                 toDo.RemoveAt(pos);
-                list.Adapter = UpdateList(toDo);
+                adapter.NotifyDataSetChanged();
             };
 
+            list.ItemClick += (object sender, AdapterView.ItemClickEventArgs e) =>
+            {
+                bool ticked = !toDo[e.Position].Check;
+                list.SetItemChecked(e.Position, ticked);
+                toDo[e.Position].Check = ticked;
+            };
 
             AddItem.Click += (object sender, EventArgs e) =>
             {
@@ -44,17 +52,12 @@ namespace InfoScreen1
                 }
                 else
                 {
-                    toDo.Add(test);
-                    list.Adapter = UpdateList(toDo);
+                    toDo.Add(new Item(test, false));
+                    adapter.NotifyDataSetChanged();
+                    //adapter.Add(toDo);
                     input.Text = "";
                 }
-                
             };
-        }
-
-        private ArrayAdapter UpdateList(JavaList<string> toDo)
-        {
-            return new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, toDo);
         }
     }
 }

@@ -13,14 +13,19 @@ using Android.Widget;
 namespace InfoScreen1
 {
     class Item
-    {
-        public Item(string item)
+    { 
+        public string Items { get; set; }
+        public bool Check { get; set; }
+
+        public Item(string items, bool check)
         {
-            this.item = item;
-            this.check = check;    
+            Items = items;
+            Check = check;    
         }
 
-        public string item { get { return item; } set { item = item; } }
-        public bool check { get { return check; } set { check = check; } }
+        public override string ToString()
+        {
+            return Items;
+        }
     }
 }
